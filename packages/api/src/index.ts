@@ -9,7 +9,6 @@ import morgan from 'morgan';
 import patientRoutes from './routes/patientRoutes';
 import errorHandler from './middleware/errorHandler';
 
-
 const app = express();
 
 // Security middleware
@@ -26,7 +25,7 @@ app.use(limiter);
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ehr_db';
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
