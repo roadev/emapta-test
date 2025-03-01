@@ -1,0 +1,12 @@
+{
+  "lerna": "3.10.7",
+  "packages": [
+    "packages/*"
+  ],
+  "npmClient": "yarn",
+  "npmClientArgs": [
+    "--ignore-engines"
+  ],
+  "nohoist": true,
+  "version": "independent"
+}
