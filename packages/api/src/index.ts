@@ -6,12 +6,11 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
-import patientRoutes from './routes/patientRoutes';
+import { patientRoutes, mappingRoutes } from './routes';
 import errorHandler from './middleware/errorHandler';
 
 const app = express();
 
-// Security middleware
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
@@ -31,6 +30,7 @@ mongoose
 
 // API Routes
 app.use('/api/patients', patientRoutes);
+app.use("/api/mappings", mappingRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);
