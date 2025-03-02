@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { createMapping, getMapping, updateMapping, deleteMapping, getAllMappings } from "../controllers/mappingController";
+import { validateRequestParts } from "../middleware/validateRequestParts";
+import { mappingSchema } from "../utils/validators/mappingValidator";
+import { ehrParamSchema } from "../utils/validators/paramsValidator";
 
 const router = Router();
 
-router.post("/", createMapping);
+router.post("/", validateRequestParts({ body: mappingSchema }), createMapping);
+router.put("/:ehr", validateRequestParts({ params: ehrParamSchema, body: mappingSchema }), updateMapping);
+router.get("/:ehr", validateRequestParts({ params: ehrParamSchema }), getMapping);
 router.get("/", getAllMappings);
-router.get("/:ehr", getMapping);
-router.put("/:ehr", updateMapping);
-router.delete("/:ehr", deleteMapping);
+router.delete("/:ehr", validateRequestParts({ params: ehrParamSchema }), deleteMapping);
 
 export default router;
