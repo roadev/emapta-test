@@ -1,10 +1,9 @@
-// src/controllers/authController.ts
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { UserModel, IUser } from "../models/user";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Set this in your environment
+const JWT_SECRET = process.env.JWT_SECRET || "super_secret_key";
 
 export const register: RequestHandler = async (req, res, next): Promise<void> => {
   try {
@@ -40,7 +39,7 @@ export const login: RequestHandler = async (req, res, next): Promise<void> => {
       return;
     }
 
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
     res.status(200).json({ token, user: { id: user._id, email: user.email, name: user.name } });
   } catch (error) {
     next(error);

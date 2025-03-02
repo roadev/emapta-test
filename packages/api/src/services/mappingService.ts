@@ -4,10 +4,14 @@ import { MappingModel } from "../models/mapping";
 export async function getMappingForEHR(ehr: string): Promise<{ [inputField: string]: string }> {
   const cacheKey = `mapping:${ehr}`;
   
-  const cachedMapping = await redisClient.get(cacheKey);
-  if (cachedMapping) {
-    console.log("Returning cached mapping for:", ehr);
-    return JSON.parse(cachedMapping);
+  try {
+    const cachedMapping = await redisClient.get(cacheKey);
+    if (cachedMapping) {
+      console.log("Returning cached mapping for:", ehr);
+      return JSON.parse(cachedMapping);
+    }
+  } catch (err) {
+    console.error("Redis error (get):", err);
   }
   
   const mappingDoc = await MappingModel.findOne({ ehr });
@@ -15,9 +19,11 @@ export async function getMappingForEHR(ehr: string): Promise<{ [inputField: stri
     throw new Error(`Mapping for EHR ${ehr} not found in database`);
   }
   
-  await redisClient.set(cacheKey, JSON.stringify(mappingDoc.mapping), {
-    EX: 3600,
-  });
+  try {
+    await redisClient.set(cacheKey, JSON.stringify(mappingDoc.mapping), { EX: 3600 });
+  } catch (err) {
+    console.error("Redis error (set):", err);
+  }
   
   return mappingDoc.mapping;
 }

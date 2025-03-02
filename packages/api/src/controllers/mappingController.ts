@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { MappingModel, IMapping } from "../models/mapping";
+import redisClient from "../services/redisClient"; 
 
 export const createMapping: RequestHandler = async (req, res, next): Promise<void> => {
     try {
@@ -48,18 +49,26 @@ export const getAllMappings: RequestHandler = async (req, res, next): Promise<vo
 
 export const updateMapping: RequestHandler = async (req, res, next): Promise<void> => {
     try {
-        const { ehr } = req.params;
-        const updateData = req.body;
-        const mapping = await MappingModel.findOneAndUpdate({ ehr }, updateData, { new: true });
-        if (!mapping) {
-            res.status(404).json({ error: "Mapping not found" });
-            return;
-        }
-        res.status(200).json(mapping);
+      const { ehr } = req.params;
+      const updateData = req.body;
+      const mapping = await MappingModel.findOneAndUpdate({ ehr }, updateData, { new: true });
+      if (!mapping) {
+        res.status(404).json({ error: "Mapping not found" });
+        return;
+      }
+      // Invalidate the cache for this EHR mapping
+      const cacheKey = `mapping:${ehr}`;
+      try {
+        await redisClient.del(cacheKey);
+        console.log(`Cache for ${ehr} invalidated.`);
+      } catch (cacheErr) {
+        console.error("Error invalidating cache:", cacheErr);
+      }
+      res.status(200).json(mapping);
     } catch (error) {
-        next(error);
+      next(error);
     }
-};
+  };
 
 export const deleteMapping: RequestHandler = async (req, res, next): Promise<void> => {
     try {
