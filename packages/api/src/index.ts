@@ -6,7 +6,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
-import { patientRoutes, mappingRoutes } from './routes';
+import { patientRoutes, mappingRoutes, authRoutes } from './routes';
 import errorHandler from './middleware/errorHandler';
 
 const app = express();
@@ -29,6 +29,7 @@ mongoose
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // API Routes
+app.use("/api/auth", authRoutes);
 app.use('/api/patients', patientRoutes);
 app.use("/api/mappings", mappingRoutes);
 
