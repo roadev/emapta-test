@@ -23,9 +23,9 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ehr_db';
+const DB_HOST = process.env.DB_HOST || '';
 mongoose
-  .connect(MONGO_URI)
+  .connect(DB_HOST)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
@@ -35,7 +35,7 @@ app.use('/api/patients', patientRoutes);
 // Error Handling Middleware
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.APP_PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -2,11 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { mapPatientData } from '../services/mappingService';
 import { ehrServiceFactory } from '../services/ehrServiceFactory';
 
-export async function submitPatientData(req: Request, res: Response, next: NextFunction) {
+export async function submitPatientData(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { ehr, patientData } = req.body;
     if (!ehr || !patientData) {
-      return res.status(400).json({ error: 'ehr and patientData are required' });
+      res.status(400).json({ error: 'ehr and patientData are required' });
     }
 
     const transformedData = mapPatientData(ehr, patientData);
