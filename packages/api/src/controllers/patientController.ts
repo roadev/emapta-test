@@ -100,7 +100,14 @@ export const getPatient: RequestHandler = async (req, res, next): Promise<void> 
 export const updatePatient: RequestHandler = async (req, res, next): Promise<void> => {
   try {
     const { id } = req.params;
-    const updatedPatient = await PatientModel.findByIdAndUpdate(id, req.body, { new: true });
+    const update = req.body;
+
+    const userIdentifier = req.user ? (req.user.email || req.user.id) : "unknown";
+
+    const query = PatientModel.findByIdAndUpdate(id, update, { new: true });
+    query.setOptions({ user: req.user ? (req.user.email || req.user.id) : "unknown" });
+
+    const updatedPatient = await query;
     if (!updatedPatient) {
       res.status(404).json({ error: "Patient not found" });
       return;
@@ -110,6 +117,7 @@ export const updatePatient: RequestHandler = async (req, res, next): Promise<voi
     next(error);
   }
 };
+
 
 export const deletePatient: RequestHandler = async (req, res, next): Promise<void> => {
   try {

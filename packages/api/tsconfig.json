@@ -8,8 +8,9 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "types": ["node"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "outDir": "./build"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
