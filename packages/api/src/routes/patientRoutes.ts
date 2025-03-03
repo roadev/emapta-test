@@ -11,7 +11,7 @@ router.use(authenticate);
 
 router.post("/", validateRequestParts({ body: patientSchema }), createPatient);
 router.get("/:id", getPatient);
-router.put("/:id", validateRequestParts({ body: patientSchema }), updatePatient);
+router.put("/:id", validateRequestParts({ body: patientSchema.partial() }), updatePatient);
 router.delete("/:id", deletePatient);
 router.get("/", validateRequestParts({ query: patientQuerySchema }), listPatients);
 
