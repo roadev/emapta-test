@@ -11,6 +11,6 @@
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "outDir": "./build"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "load-test.js"],
   "exclude": ["node_modules"]
 }

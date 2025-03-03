@@ -6,11 +6,12 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
+import { handle } from "i18next-http-middleware";
 import { patientRoutes, mappingRoutes, authRoutes } from './routes';
 import errorHandler from './middleware/errorHandler';
 import { metricsMiddleware } from "./middleware/metrics";
 import register from "./metrics";
-
+import i18next from "./i18n";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(morgan('combined'));
+app.use(handle(i18next));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,

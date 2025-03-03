@@ -29,7 +29,7 @@ export const getMapping: RequestHandler = async (req, res, next): Promise<void> 
         const { ehr } = req.params;
         const mapping = await MappingModel.findOne({ ehr });
         if (!mapping) {
-            res.status(404).json({ error: "Mapping not found" });
+            res.status(404).json({ error: req.t("mapping_not_found") });
             return;
         }
         res.status(200).json(mapping);

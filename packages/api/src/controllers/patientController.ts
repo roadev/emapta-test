@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { z } from "zod";
 import { PatientModel } from '../models/patient';
 import { mapPatientData } from '../services/mappingService';
 import { transformPatientData } from "../services/mappingService";
 import { ehrServiceFactory } from '../services/ehrServiceFactory';
-import { patientQuerySchema } from "../utils/validators/patientQueryValidator";
 import redisClient from "../services/redisClient";
 
 interface AuthenticatedRequest extends Request {
@@ -84,7 +82,10 @@ export const createPatient: RequestHandler = async (req, res, next): Promise<voi
     const patientData = req.body;
     const newPatient = new PatientModel(patientData);
     await newPatient.save();
-    res.status(201).json(newPatient);
+    res.status(201).json({ 
+      patient: newPatient, 
+      message: req.t("patient_created") 
+    });
   } catch (error) {
     next(error);
   }
@@ -93,16 +94,28 @@ export const createPatient: RequestHandler = async (req, res, next): Promise<voi
 export const getPatient: RequestHandler = async (req, res, next): Promise<void> => {
   try {
     const { id } = req.params;
+
+    // Validate if the id is a valid 24-character hexadecimal string.
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+      res.status(400).json({ error: req.t("invalid_patient_id") });
+      return;
+    }
+
     const patient = await PatientModel.findById(id);
     if (!patient) {
-      res.status(404).json({ error: "Patient not found" });
+      res.status(404).json({ error: req.t("patient_not_found") });
       return;
     }
     res.status(200).json(patient);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === "CastError") {
+      res.status(400).json({ error: req.t("invalid_patient_id") });
+      return;
+    }
     next(error);
   }
 };
+
 
 export const updatePatient: RequestHandler = async (req, res, next): Promise<void> => {
   try {
