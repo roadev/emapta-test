@@ -7,6 +7,13 @@ import { ehrServiceFactory } from '../services/ehrServiceFactory';
 import { patientQuerySchema } from "../utils/validators/patientQueryValidator";
 import redisClient from "../services/redisClient";
 
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id?: string;
+    email?: string;
+  };
+}
+
 // Generates a cache key based on pagination parameters
 function getPatientListCacheKey(page: number, limit: number): string {
   return `patients:list:page=${page}:limit=${limit}`;
@@ -102,10 +109,12 @@ export const updatePatient: RequestHandler = async (req, res, next): Promise<voi
     const { id } = req.params;
     const update = req.body;
 
-    const userIdentifier = req.user ? (req.user.email || req.user.id) : "unknown";
+    // Cast req to AuthenticatedRequest so that user is recognized
+    const authReq = req as AuthenticatedRequest;
+    const userIdentifier = authReq.user ? (authReq.user.email || authReq.user.id) : "unknown";
 
     const query = PatientModel.findByIdAndUpdate(id, update, { new: true });
-    query.setOptions({ user: req.user ? (req.user.email || req.user.id) : "unknown" });
+    query.setOptions({ user: userIdentifier });
 
     const updatedPatient = await query;
     if (!updatedPatient) {
@@ -117,6 +126,7 @@ export const updatePatient: RequestHandler = async (req, res, next): Promise<voi
     next(error);
   }
 };
+
 
 
 export const deletePatient: RequestHandler = async (req, res, next): Promise<void> => {

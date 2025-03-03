@@ -1,5 +1,7 @@
 import redisClient from "./redisClient";
 import { MappingModel } from "../models/mapping";
+import { cacheHitCounter, cacheMissCounter } from "../metrics";
+
 
 export async function getMappingForEHR(ehr: string): Promise<{ [inputField: string]: string }> {
   const cacheKey = `mapping:${ehr}`;
@@ -8,11 +10,14 @@ export async function getMappingForEHR(ehr: string): Promise<{ [inputField: stri
     const cachedMapping = await redisClient.get(cacheKey);
     if (cachedMapping) {
       console.log("Returning cached mapping for:", ehr);
+      cacheHitCounter.inc();
       return JSON.parse(cachedMapping);
     }
   } catch (err) {
     console.error("Redis error (get):", err);
   }
+
+  cacheMissCounter.inc();
   
   const mappingDoc = await MappingModel.findOne({ ehr });
   if (!mappingDoc) {
