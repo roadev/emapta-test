@@ -26,3 +26,8 @@ export const patientSchema = z.object({
   languagePreference: z.string().optional(),
   notes: z.string().optional(),
 });
+
+export function validatePatient(data: unknown): boolean {
+  const result = patientSchema.safeParse(data);
+  return result.success; // true if validation passes, false otherwise
+};
