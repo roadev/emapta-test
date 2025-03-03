@@ -53,7 +53,12 @@ app.get("/metrics", async (req, res) => {
 // Error Handling Middleware
 app.use(errorHandler);
 
+app.use((req, res, next) => {
+  console.log(`Request handled by process ${process.pid}`);
+  next();
+});
+
 const PORT = process.env.APP_PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port 5000 (process ${process.pid})`);
 });
