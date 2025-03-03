@@ -58,6 +58,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/api/worker', (req, res) => {
+  res.json({ workerId: process.pid });
+});
+
 const PORT = process.env.APP_PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port 5000 (process ${process.pid})`);
