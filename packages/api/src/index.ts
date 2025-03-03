@@ -21,7 +21,7 @@ app.use(morgan('combined'));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 10000,
 });
 
 app.use(limiter);
