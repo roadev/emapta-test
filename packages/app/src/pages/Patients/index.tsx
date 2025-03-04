@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Container, Spinner, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 import { fetchPatients, deletePatient } from "../../services/api/patient";
 import { Patient } from "../../types/patient";
 
@@ -7,6 +9,7 @@ const PatientsPage: React.FC = () => {
     const [patients, setPatients] = useState<Patient[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadPatients = async () => {
@@ -34,11 +37,16 @@ const PatientsPage: React.FC = () => {
 
     return (
         <Container className="mt-4">
-            <h2>Patients</h2>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h2>Patients</h2>
+                <Button variant="success" onClick={() => navigate("/patients/new")}>
+                    Add Patient
+                </Button>
+            </div>
             {loading && <Spinner animation="border" />}
             {error && <Alert variant="danger">{error}</Alert>}
             {!loading && !error && (
-                <Table striped bordered hover responsive>
+                <Table striped bordered hover responsive className="text-center">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -55,11 +63,23 @@ const PatientsPage: React.FC = () => {
                                 <tr key={patient.id}>
                                     <td>{patient.name}</td>
                                     <td>{patient.gender}</td>
-                                    <td>{patient.dob}</td>
+                                    <td>{format(new Date(patient.dob), "yyyy-MM-dd")}</td>
                                     <td>{patient.email}</td>
                                     <td>{patient.phone}</td>
                                     <td>
-                                        <Button variant="danger" size="sm" onClick={() => handleDelete(patient.id)}>
+                                        <Button
+                                            variant="primary"
+                                            size="sm"
+                                            className="me-2"
+                                            onClick={() => navigate(`/patients/${patient.id}/edit`)}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            variant="danger"
+                                            size="sm"
+                                            onClick={() => handleDelete(patient.id)}
+                                        >
                                             Delete
                                         </Button>
                                     </td>
