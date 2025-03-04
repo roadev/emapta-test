@@ -6,6 +6,8 @@ import { AuthProvider } from "./context/AuthProvider";
 import { AuthContext } from "./context/AuthContext";
 import PatientsPage from "./pages/Patients";
 import PatientForm from "./pages/Patients/PatientForm";
+import MappingsPage from "./pages/Mappings";
+import MappingForm from "./pages/Mappings/MappingForm";
 
 const Dashboard: React.FC = () => <h1 className="text-center">Dashboard</h1>;
 
@@ -22,6 +24,10 @@ const AppRoutes: React.FC = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/patients/new" element={<ProtectedRoute><PatientForm /></ProtectedRoute>} />
           <Route path="/patients/:id/edit" element={<ProtectedRoute><PatientForm /></ProtectedRoute>} />
+
+          <Route path="/mappings" element={<ProtectedRoute><MappingsPage /></ProtectedRoute>} />
+          <Route path="/mappings/new" element={<ProtectedRoute><MappingForm /></ProtectedRoute>} />
+          <Route path="/mappings/:id/edit" element={<ProtectedRoute><MappingForm /></ProtectedRoute>} />
       </Routes>
   );
 };
