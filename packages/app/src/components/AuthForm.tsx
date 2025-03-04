@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { Form, Button, Container, Card } from "react-bootstrap";
 
@@ -7,11 +8,18 @@ const AuthForm: React.FC = () => {
     const [password, setPassword] = useState("");
     const [isLogin, setIsLogin] = useState(true);
     const auth = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (auth?.user) {
+            navigate("/"); // Redirect to dashboard after login
+        }
+    }, [auth?.user, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!auth) return;
-        isLogin ? await auth.loginUser(email, password) : await register(email, password);
+        await auth.loginUser(email, password);
     };
 
     return (
